@@ -1,6 +1,8 @@
 #ifndef PREPROCESS_H_INCLUDED
 #define PREPROCESS_H_INCLUDED
-
+/**
+    finish the pre-process the source file
+*/
 int preProcess(char * oriFileName , char * processedFileName)
 {
     FILE * oriFp, * processedFp ;
@@ -45,7 +47,9 @@ int preProcess(char * oriFileName , char * processedFileName)
                         printf("c is %c\n",c) ;
                         if(c != ';' && c != ' ' && c != '\t')
                         */
-                        putc(' ',processedFp) ;
+                        state = WHITE_SPACE ;
+                        putc('\n',processedFp) ;
+                        break ;
                         //fseek(oriFp,1,SEEK_CUR) ;//move the file pointer
                         /** give up the process of the \r\n ,in text mode ,it will
                             be transform to \n ,but use seek ,it doesn't process it
@@ -53,10 +57,14 @@ int preProcess(char * oriFileName , char * processedFileName)
                             should -2 , it is troublesome
                             so ,just put whitespace
                         */
-                        break ;
+
                     case '"' :
                         state = STR ;
                         putc(c , processedFp) ;
+                        break ;
+                    case '\'' :
+                        state = P_CHAR ;
+                        putc(c, processedFp) ;
                         break ;
                     case '/' :
                         state = COM_READY ;
@@ -100,8 +108,8 @@ int preProcess(char * oriFileName , char * processedFileName)
                         printf("warning ! afer '/' has character %d \n",(int)c) ;
                         break ;
                 }
+                 break ;
             }
-                break ;
             case COM_S :
             {
                 switch(c)
@@ -113,8 +121,8 @@ int preProcess(char * oriFileName , char * processedFileName)
                     default :
                         break ;
                 }
+                 break ;
             }
-                break ;
             case COM_M :
             {
                 switch(c)
@@ -138,33 +146,34 @@ int preProcess(char * oriFileName , char * processedFileName)
                         state = COM_M ;
                         break ;
                 }
-            }
                 break ;
+            }
             case WHITE_SPACE :
             {
                 switch(c)
                 {
-                    case ' ':
+                    case ' '  :
                     case '\t' :
+                    case '\r' :
+                    case '\n' :
+                        break ;
+                    case '/' :
+                        state = COM_READY ;
+                        break ;
+                    case '"' :
+                        state = STR ;
+                        putc(c,processedFp) ;
+                        break ;
+                    case '\'' :
+                        state = P_CHAR ;
+                        putc(c , processedFp) ;
                         break ;
                     default :
-                        switch(c)
-                        {
-                            case '/' :
-                                state = COM_READY ;
-                                break ;
-                            case '"' :
-                                state = STR ;
-                                putc(c,processedFp) ;
-                                break ;
-                            default :
-                                state = CODE ;
-                                putc(c,processedFp) ;
-                        }
-                        break ;
+                        state = CODE ;
+                        putc(c,processedFp) ;
                 }
+                 break ;
             }
-                break ;
             case STR :
             {
                 switch(c)
@@ -181,14 +190,38 @@ int preProcess(char * oriFileName , char * processedFileName)
                         putc(c,processedFp) ;
                         break ;
                 }
+                 break ;
             }
+            case P_CHAR :
+            {
+                switch(c)
+                {
+                    case '\'' :
+                        state = CODE ;
+                        putc(c , processedFp) ;
+                        break ;
+                    case '\\' :
+                        state = CHAR_ESCAPE ;
+                        putc( c, processedFp) ;
+                        break ;
+                    default :
+                        putc(c ,processedFp) ;
+                        break ;
+                }
                 break ;
+            }
             case STR_ESCAPE :
             {
                 putc(c,processedFp) ;
                 state = STR ;
-            }
                 break ;
+            }
+            case CHAR_ESCAPE :
+            {
+                state = P_CHAR ;
+                putc(c,processedFp) ;
+                break ;
+            }
             default :
                 printf("Error at pre-process\n") ;
                 return FALSE ;

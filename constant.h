@@ -22,4 +22,6 @@ define some constant
 #define WHITE_SPACE 5
 #define STR 6
 #define STR_ESCAPE 7
+#define P_CHAR 8
+#define CHAR_ESCAPE 9
 #endif // CONSTANT_H_INCLUDED
