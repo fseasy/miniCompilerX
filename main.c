@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "constant.h"
+#include "token_code.h"
 #include "nameTable.h"
 #include "hash.h"
 #include "preprocess.h"
@@ -165,6 +166,223 @@ int main()
             copyToken(dbuffer,tokenNameCopy) ;
             /* do not retract */
             tokenScanEcho("STRING",tokenNameCopy) ;
+        }
+        /** recognize the operator and separator*/
+        else
+        {
+            /*readyCopy(dbuffer) ;*/
+            switch(c)
+            {
+                case '>' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** >= */
+                        tokenScanEcho("GE","") ;
+                        /*tokenScanEcho("=","") ;*/
+                    }
+                    else
+                    {
+                        /** > */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("GT","") ;
+                    }
+                    break ;
+                }
+                case '<' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** <= */
+                        tokenScanEcho("LE","") ;
+                    }
+                    else
+                    {
+                        /** < */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("LT","") ;
+                    }
+                    break ;
+                }
+                case '=' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** == */
+                        tokenScanEcho("EQ","") ;
+                    }
+                    else
+                    {
+                        /** = */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("ASSIGN","") ;
+                    }
+                    break ;
+                }
+                case '!' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** != */
+                        tokenScanEcho("NEQ","") ;
+                    }
+                    else
+                    {
+                        /** ! */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("NOT","") ;
+                    }
+                    break ;
+                }
+                case '(' :
+                     /** ( */
+                    tokenScanEcho("LR_BRAC","") ;
+                    break ;
+                case ')' :
+                    /** ) */
+                    tokenScanEcho("RR_BRAC","") ;
+                    break ;
+                case '[' :
+                    /** [ */
+                    tokenScanEcho("LS_BRAC","") ;
+                    break ;
+                case ']' :
+                    tokenScanEcho("RS_BRAC","") ;
+                    break ;
+                case '+':
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '+')
+                    {
+                        /** ++ */
+                        tokenScanEcho("INC","") ;
+                    }
+                    else if(c == '=')
+                    {
+                        /** ++ */
+                        tokenScanEcho("ADD_ASS","") ;
+                    }
+                    else
+                    {
+                        /** + */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("ADD","") ;
+                    }
+                    break ;
+                }
+                case '-' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '-')
+                    {
+                        /** -- */
+                        tokenScanEcho("DEC","") ;
+                    }
+                    else if(c == '=')
+                    {
+                        /** -= */
+                        tokenScanEcho("SUB_ASS","") ;
+                    }
+                    else
+                    {
+                        /** - */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("SUB","") ;
+                    }
+                    break ;
+                }
+                case '*' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** *= */
+                        tokenScanEcho("MUL_ASS","") ;
+
+                    }
+                    else
+                    {
+                        /** * */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("MUL_OR_INDIR","") ;
+                    }
+                    break ;
+                }
+                case '/' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** /= */
+                        tokenScanEcho("DIV_ASS","") ;
+                    }
+                    else
+                    {
+                        /** / */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("DIV","") ;
+                    }
+                    break ;
+                }
+                case '&' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '&')
+                    {
+                        /** && */
+                        tokenScanEcho("AND","") ;
+                    }
+                    else
+                    {
+                        /** &*/
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("REFERENCE","") ;
+                    }
+                    break ;
+                }
+                case '|' :
+                {
+                    c = getChar('|') ;
+                    if(c == '|')
+                    {
+                        /** || */
+                        tokenScanEcho("OR","") ;
+                    }
+                    else
+                    {
+                        tokenScanError("NOT SUPPORTED OPARATOR","'|' is not supported!") ;
+                    }
+                    break ;
+                }
+                case ',' :
+                    /** , */
+                    tokenScanEcho("COMMA","") ;
+                    break ;
+                case ';' :
+                    /** ; */
+                    tokenScanEcho("SEMIC","") ;
+                    break ;
+                case '{' :
+                    /** { */
+                    tokenScanEcho("LB_BRAC","") ;
+                    break ;
+                case '}' :
+                    /** } */
+                    tokenScanEcho("RB_BRAC","") ;
+                    break ;
+                default :
+                {
+                    /** not supported */
+                    char tokenError[200] ;
+                    sprintf(tokenError,"character:%c is not supported!",c) ;
+                    tokenScanError("NOT SUPPORTED CHARACTER",tokenError) ;
+                }
+
+            }
         }
     }
     deleteDBuffer(dbuffer) ;

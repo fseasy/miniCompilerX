@@ -27,4 +27,5 @@ define some constant
 
 /* main */
 #define TOKEN_MAX_LENGTH 128
+
 #endif // CONSTANT_H_INCLUDED

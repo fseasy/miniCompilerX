@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Debug" />
+	<File name="constant.h" open="1" top="0" tabpos="3">
+		<Cursor position="461" topLine="12" />
+	</File>
+	<File name="dbuffer.h" open="1" top="0" tabpos="7">
+		<Cursor position="3736" topLine="105" />
+	</File>
+	<File name="hash.h" open="1" top="0" tabpos="5">
+		<Cursor position="80" topLine="0" />
+	</File>
+	<File name="keyword.h" open="1" top="0" tabpos="8">
+		<Cursor position="1849" topLine="48" />
+	</File>
+	<File name="main.c" open="1" top="1" tabpos="1">
+		<Cursor position="9135" topLine="271" />
+	</File>
+	<File name="nameTable.h" open="1" top="0" tabpos="2">
+		<Cursor position="3477" topLine="88" />
+	</File>
+	<File name="preprocess.h" open="1" top="0" tabpos="6">
+		<Cursor position="838" topLine="0" />
+	</File>
+	<File name="token_code.h" open="1" top="0" tabpos="4">
+		<Cursor position="1244" topLine="49" />
+	</File>
+</CodeBlocks_layout_file>
