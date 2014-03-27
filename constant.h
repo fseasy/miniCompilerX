@@ -24,4 +24,7 @@ define some constant
 #define STR_ESCAPE 7
 #define P_CHAR 8
 #define CHAR_ESCAPE 9
+
+/* main */
+#define TOKEN_MAX_LENGTH 128
 #endif // CONSTANT_H_INCLUDED

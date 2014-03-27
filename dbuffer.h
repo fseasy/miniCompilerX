@@ -114,8 +114,8 @@ char getChar(DBuffer * dbuffer)
 void readyCopy(DBuffer * dbuffer)
 {
     /*let the head behind the rear
-      the rear may be in the 1 -> DBUF_SIZE/2 -1 ,or DBUF_SIZE/2 +1 -> DBUF_SIZE -1
-      so just return rear -1*/
+      because the rear may be in the 1 -> DBUF_SIZE/2 -1 ,or DBUF_SIZE/2 +1 -> DBUF_SIZE -1
+      so just return (rear -1) !!*/
       dbuffer->head = dbuffer->rear -1 ;
 }
 /**
@@ -123,16 +123,39 @@ void readyCopy(DBuffer * dbuffer)
 */
 int copyToken(DBuffer * dbuffer , char * token)
 {
-        /*from the head ,to the rear -1
-        need to consider the EOF may at the center
+        /*from the head ,to the [rear -1]!!
+        need to consider the EOF may at the center -> .....head...|...rear....
+        or rear has run back -> ...rear......|........head...
         */
         int i = dbuffer->head ,
             index = 0 ;
-        for( ; i < dbuffer->rear ; i++)
+        if(dbuffer->head < dbuffer->rear)
         {
-            if(dbuffer->buf[i] != EOF)
+            for( ; i < dbuffer->rear ; i++)
             {
-                token[index++] = dbuffer->buf[i] ;
+                if(dbuffer->buf[i] != EOF)
+                {
+                    token[index++] = dbuffer->buf[i] ;
+                }
+            }
+        }
+        else
+        {
+            //the rear part
+            for( ; i < DBUF_SIZE -1 ; i++)
+            {
+                if(dbuffer->buf[i] != EOF)
+                {
+                    token[index++] = dbuffer->buf[i] ;
+                }
+            }
+            //the front part
+            for(i = 0 ; i < dbuffer->rear ; i++)
+            {
+                if(dbuffer->buf[i] != EOF)
+                {
+                    token[index++] = dbuffer->buf[i] ;
+                }
             }
         }
         token[index] = '\0' ;

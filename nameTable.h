@@ -96,7 +96,13 @@ int createAndInsertItem(NameTable * nameTable , char * tokenName )
     while(*pos != NULL)
     {
         if(strcmp(tokenName,(*pos)->tokenInfo.name) == 0)
-        return -1 ;
+        {
+            /* return -1 ;  *//* some days i want to return -1 to
+                                avoid the dulpication definition ,
+                                but it is not correct ,because it may
+                                be assign words instead of definition */
+            return *pos ;
+        }
         pos = &((*pos)->nxtItem) ;
     }
    return _insertIntoNameTable(nameTable,pos,tokenName) ;
