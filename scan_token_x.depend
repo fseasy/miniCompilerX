@@ -1,23 +1,26 @@
 # depslib dependency file v1.0
-1394760097 source:c:\users\xx.pureweber51-pc\c++pro\scan_token_x\main.c
+1395911683 source:c:\users\xx.pureweber51-pc\c++pro\scan_token_x\main.c
 	<stdio.h>
 	<stdlib.h>
 	<ctype.h>
 	"constant.h"
+	"token_code.h"
 	"nameTable.h"
 	"hash.h"
 	"preprocess.h"
 	"dbuffer.h"
+	"keyword.h"
+	"stack.h"
 
-1394611861 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\constant.h
+1395908448 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\constant.h
 
-1394177180 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\nametable.h
+1395909115 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\nametable.h
 
-1394121210 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\hash.h
+1395908343 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\hash.h
 
-1394760129 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\preprocess.h
+1394760130 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\preprocess.h
 
-1394706533 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\dbuffer.h
+1395842028 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\dbuffer.h
 
 1395841088 source:i:\scan_token_x\main.c
 	<stdio.h>
@@ -64,4 +67,10 @@
 1395842028 g:\scan_token_x\dbuffer.h
 
 1395850150 g:\scan_token_x\keyword.h
+
+1395900287 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\token_code.h
+
+1395909219 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\keyword.h
+
+1395910338 c:\users\xx.pureweber51-pc\c++pro\scan_token_x\stack.h
 

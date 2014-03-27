@@ -15,7 +15,7 @@ int hashpjw(char * str)
             h = h^g ;
         }
     }
-    return h % PRIME ;
+    return h % MAX_PRIME ;
 }
 int getHashCode(char * str)
 {

@@ -71,7 +71,7 @@ void insertKeyWordFromFile(KeyWord * keyWord , FILE * fp)
             keywordName[strlen(keywordName) -1] = '\0' ;
         }
         int x =insertKeyWord(keyWord , keywordName) ;
-        printf("%d,%s\n",x,keywordName) ;
+       /* printf("%d,%s\n",x,keywordName) ;*/
 
     }
 }

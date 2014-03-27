@@ -5,11 +5,11 @@
 define some constant
 */
 /*hash*/
-#define PRIME 211 ;
+#define MAX_PRIME 9973 ;
 /*nameTable*/
 #define TRUE 1
 #define FALSE 0
-#define NODE_NUM 211
+#define NODE_NUM 2111
 #define CHILD_NUM 20
 #define NAME_STRING_LEN 3000
 

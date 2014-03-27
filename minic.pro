@@ -9,7 +9,7 @@ isTrue = true ;
 x = '\t' ;
 dnumber = 23.67 ;
 num *= 2 ;
-for( ; num >= 0; num--)
+for( ; num >= 0; num--))
 {
 if(num >= 1)
 {

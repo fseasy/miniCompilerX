@@ -8,6 +8,7 @@
 #include "preprocess.h"
 #include "dbuffer.h"
 #include "keyword.h"
+#include "stack.h"
 
 int isNonedigit(char c) ;
 void tokenScanEcho(char * type , char* val) ;
@@ -16,13 +17,14 @@ int main()
 {
     char sourceFileName[20] = "minic.c" ;
     //printf("%d",getHashCode(str));
+    /** init nameTable */
     NameTable * cur = getNameTable(NULL) ;
     //int x = createAndInsertItem(cur,str) ;
     //printf("\n%d\n",x) ;
+    /** pre-process */
     char processedFileName[20] ;
     preProcess(sourceFileName,processedFileName) ;
    // printf("%s\n",fileName) ;
-
     /** init keyword */
     KeyWord * keyWord = (KeyWord *)malloc(sizeof(KeyWord)) ;
     FILE * keywordFile = fopen("keywords.txt","r") ;
@@ -33,6 +35,9 @@ int main()
         return -1 ;
     }
     insertKeyWordFromFile(keyWord,keywordFile) ;
+    /** init the stack */
+    Stack * stack = (Stack *)malloc(sizeof(Stack)) ;
+    initStack(stack) ;
 
     /** init the buffer */
     DBuffer * dbuffer = (DBuffer *)malloc(sizeof(DBuffer)) ;
@@ -239,20 +244,67 @@ int main()
                     break ;
                 }
                 case '(' :
+                {
                      /** ( */
                     tokenScanEcho("LR_BRAC","") ;
+                    /* we need do the error-process by stack */
+                    if(!push(stack,'('))
+                    {
+                        tokenScanError("INNER ERROR","stack has full") ;
+                    }
                     break ;
+                }
+
                 case ')' :
-                    /** ) */
+                {
+                     /** ) */
                     tokenScanEcho("RR_BRAC","") ;
+                    char charMatch ;
+                    if(pop(stack,&charMatch))
+                    {
+                        if(charMatch != '(')
+                        {
+                            /* not matched */
+                            tokenScanError("NOT MATCHED","right round bracket is not matched") ;
+                        }
+                    }
+                    else
+                    {
+                        /* the stack has empty*/
+                        tokenScanError("NOT MATCHED","more right round brackets is found") ;
+                    }
                     break ;
+                }
                 case '[' :
-                    /** [ */
+                {
+                      /** [ */
                     tokenScanEcho("LS_BRAC","") ;
+                    if(!push(stack,'['))
+                    {
+                        tokenScanError("INNER ERROR","stack has full") ;
+                    }
                     break ;
+                }
+
                 case ']' :
+                {
                     tokenScanEcho("RS_BRAC","") ;
+                    char charMatch ;
+                    if(pop(stack,&charMatch))
+                    {
+                        if(charMatch != '[')
+                        {
+                            /* not matched */
+                            tokenScanError("NOT MATCHED","right square bracket is not matched") ;
+                        }
+                    }
+                    else
+                    {
+                        /* the stack has empty*/
+                        tokenScanError("NOT MATCHED","more right square brackets is found") ;
+                    }
                     break ;
+                }
                 case '+':
                 {
                     c = getChar(dbuffer) ;
@@ -367,13 +419,37 @@ int main()
                     tokenScanEcho("SEMIC","") ;
                     break ;
                 case '{' :
+                {
                     /** { */
                     tokenScanEcho("LB_BRAC","") ;
+                    if(!push(stack,'{'))
+                    {
+                        tokenScanError("INNER ERROR","stack has full") ;
+                    }
                     break ;
+                }
+
                 case '}' :
-                    /** } */
+                {
+                     /** } */
                     tokenScanEcho("RB_BRAC","") ;
+                    char charMatch ;
+                    if(pop(stack,&charMatch))
+                    {
+                        if(charMatch != '{')
+                        {
+                            /* not matched */
+                            tokenScanError("NOT MATCHED","right square bracket is not matched") ;
+                        }
+                    }
+                    else
+                    {
+                        /* the stack has empty*/
+                        tokenScanError("NOT MATCHED","more right square brackets is found") ;
+                    }
                     break ;
+                }
+
                 default :
                 {
                     /** not supported */
@@ -385,7 +461,13 @@ int main()
             }
         }
     }
+    /* is the stack empty ? */
+    if(!isEmpty(stack))
+    {
+        tokenScanError("NOT MATCHED","brackets is not matched") ;
+    }
     deleteDBuffer(dbuffer) ;
+    free(stack) ;
     return 0;
 }
 int isNonedigit(char c)
@@ -404,7 +486,25 @@ void tokenScanEcho(char * type , char* val)
     }
 
 }
+void printLine()
+{
+    int i ;
+    for(i = 0 ; i < 30 ; i ++)
+    {
+        if(i %3 == 0)
+        {
+            putc('-',stdout) ;
+        }
+        else
+        {
+            putc(' ',stdout) ;
+        }
+    }
+    putchar('\n') ;
+}
 void tokenScanError(char * errorType , char * detail)
 {
-    printf("ERROR: %s :%s\n",errorType , detail) ;
+    printLine() ;
+    printf("\nERROR: %s :%s\n\n",errorType , detail) ;
+    printLine() ;
 }

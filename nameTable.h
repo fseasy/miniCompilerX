@@ -90,7 +90,7 @@ int _insertIntoNameTable(NameTable  *  nameTable , NameTableItem ** preItem , ch
 int createAndInsertItem(NameTable * nameTable , char * tokenName )
 {
     int hashCode ;
-    hashCode = getHashCode(tokenName) ;
+    hashCode = getHashCode(tokenName) % NODE_NUM ;
     //to know if the tokenName is legal , it should have been checked for key word
     NameTableItem ** pos = & nameTable->nodeList[hashCode] ;
     while(*pos != NULL)
