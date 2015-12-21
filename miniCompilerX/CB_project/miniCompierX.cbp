@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="miniCompierX" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\miniCompierX" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\miniCompierX" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="lex\constant.h" />
+		<Unit filename="lex\dbuffer.h" />
+		<Unit filename="lex\hash.h" />
+		<Unit filename="lex\keyword.h" />
+		<Unit filename="lex\lexical.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lex\preprocess.h" />
+		<Unit filename="lex\stack.h" />
+		<Unit filename="lex\test.pro" />
+		<Unit filename="lex\token_code.h" />
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="semantic\genfile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="semantic\semantic_act.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="semantic\semantic_analysis.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="semantic\semantic_analysis.h" />
+		<Unit filename="syntax\analysis_table.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="syntax\analysis_table.h" />
+		<Unit filename="syntax\nonterminallist.txt" />
+		<Unit filename="syntax\production.txt" />
+		<Unit filename="syntax\syntax.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="syntax\terminallist.txt" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

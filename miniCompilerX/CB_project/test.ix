@@ -1,0 +1,66 @@
+testFn:
+param num 
+param "%s"  
+call printf , 2
+label_0:
+MAIN:
+tmp_0 = 1 
+num = tmp_0 
+tmp_1 = TRUE 
+isTrue = tmp_1 
+tmp_2 = '\t' 
+x = tmp_2 
+tmp_3 = 23.67 
+dnumber = tmp_3 
+tmp_4 = 2 
+num = tmp_4 
+label_2:
+tmp_5 = 0 
+tmp_6 = num >= tmp_5 
+if tmp_6 goto label_3 
+goto label_4
+DEC num 
+tmp_8 = 1 
+tmp_9 = num >= tmp_8 
+if tmp_9 goto label_6 
+goto label_7
+label_6:
+goto label_5
+label_7:
+tmp_11 = 0 
+tmp_12 = num == tmp_11 
+if tmp_12 goto label_8 
+goto label_9
+label_8:
+goto label_4
+label_9:
+goto label_5
+label_4:
+tmp_14 = TRUE 
+tmp_15 = isTrue == tmp_14 
+if tmp_15 goto label_10 
+goto label_11
+label_10:
+param "Has tested output keyword\n"  
+call printf , 1
+goto label_12
+label_11
+param "%lf" 
+param 00000006
+call scanf , 2
+tmp_18 = 20.0 
+tmp_19 = dnumber < tmp_18 
+tmp_20 = 0 
+tmp_21 = num == tmp_20 
+tmp_22 = tmp_19 and tmp_21 
+if tmp_22 goto label_13 
+goto label_14
+label_13:
+param num
+call testFn , 1
+label_14:
+label_12:
+tmp_24 = 0 
+eax = tmp_24 
+goto label_1
+label_1:

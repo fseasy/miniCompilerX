@@ -1,0 +1,28 @@
+P X mainFun
+funDefine
+funHead funBody
+returnType formalParam 
+funDomain
+declaration
+assignment
+condition
+loop
+io
+funApply
+returnWord jumpWord
+paramList
+type
+idList
+singleOP
+EXP E T F DIGIT G
+basicBooleanEXP relOP logicOP
+acturalParam 
+forAssignPart forBoolPart forAssignList forAssignment 
+returnVal 
+printContent
+ACT_1
+ACT_2
+ACT_3
+ACT_4
+ACT_5
+ACT_6

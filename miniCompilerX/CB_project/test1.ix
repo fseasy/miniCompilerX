@@ -1,0 +1,62 @@
+myPutC:
+param c 
+param "%c"  
+call printf , 2
+label_0:
+MAIN:
+tmp_0 = 4 
+a = tmp_0 
+tmp_1 = 3 
+b = tmp_1 
+tmp_2 = a - b 
+k = tmp_2 
+tmp_3 = 4 
+tmp_4 = a == tmp_3 
+xxb = tmp_4 
+tmp_5 = 0 
+tmp_6 = k > tmp_5 
+tmp_7 = tmp_6 and xxb 
+if tmp_7 goto label_2 
+goto label_3
+label_2:
+param k 
+param "k'val is %s\n"  
+call printf , 2
+goto label_4
+label_3
+param "k is less than 0\n"  
+call printf , 1
+label_4:
+tmp_10 = 3 
+i = tmp_10 
+tmp_11 = 'x' 
+xxc = tmp_11 
+label_5:
+tmp_12 = 0 
+tmp_13 = i > tmp_12 
+if tmp_13 goto label_6 
+goto label_7
+label_8:
+DEC i 
+goto label_5
+label_6:
+tmp_15 = i == k 
+if tmp_15 goto label_9 
+goto label_10
+label_9:
+dnum = a 
+goto label_7
+goto label_11
+label_10
+tmp_18 = 'e' 
+xxc = tmp_18 
+param xxc
+call myPutC , 1
+goto label_8
+label_11:
+goto label_8
+label_7:
+tmp_19 = 0 
+eax = tmp_19 
+goto label_1
+label_1:

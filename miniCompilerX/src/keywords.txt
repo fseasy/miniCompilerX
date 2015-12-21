@@ -1,0 +1,16 @@
+int
+char
+double
+bool
+return
+void
+if
+else
+for
+break
+continue
+true
+false
+main
+printf
+scanf

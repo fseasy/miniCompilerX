@@ -1,0 +1,559 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include "constant.h"
+#include "token_code.h"
+#include "../lex/hash.h"
+#include "preprocess.h"
+#include "dbuffer.h"
+#include "keyword.h"
+#include "stack.h"
+
+int isNonedigit(char c) ;
+void tokenScanEcho(char * type , char* val) ;
+void tokenScanError(char * errorType , char * detail) ;
+void tokenScanWriteToFile(FILE * fp , char * type , char * val) ;
+int lexAnalysis(char * srcName , char * outName)
+{
+    int errc = 0 ;
+    char sourceFileName[20] ;
+    strcpy(sourceFileName  , srcName) ;
+    /** pre-process */
+    char processedFileName[20] ;
+    preProcess(sourceFileName,processedFileName) ;
+   // printf("%s\n",fileName) ;
+    /** init keyword */
+    KeyWord * keyWord = (KeyWord *)malloc(sizeof(KeyWord)) ;
+    FILE * keywordFile = fopen("keywords.txt","r") ;
+    initKeyWord(keyWord) ;
+    if(!keywordFile)
+    {
+        printf("Init keyword error! \n") ;
+        return -1 ;
+    }
+    insertKeyWordFromFile(keyWord,keywordFile) ;
+    /** init the stack */
+    Stack * stack = (Stack *)malloc(sizeof(Stack)) ;
+    initStack(stack) ;
+
+    /** init the buffer */
+    DBuffer * dbuffer = (DBuffer *)malloc(sizeof(DBuffer)) ;
+    if(!initDBuffer(dbuffer,processedFileName))
+    {
+        return FALSE ;
+    }
+    /** init the result file*/
+    char resultFileName[30] = "" ;
+    char * dotPos = strchr(sourceFileName,'.') ;
+    if(dotPos)
+    {
+        strncpy(resultFileName,sourceFileName,dotPos - sourceFileName) ;
+        resultFileName[dotPos - sourceFileName] = '\0' ;
+    }
+    else
+    {
+        strcpy(resultFileName,sourceFileName) ;
+    }
+    strcat(resultFileName,".out") ;
+    strcpy(outName,resultFileName) ;
+    FILE * resultFile = fopen(resultFileName,"w") ;
+    if(!resultFile)
+    {
+        printf("create output file %s failed !\n",resultFileName) ;
+        return -1 ;
+    }
+    char c ;
+    char tokenNameCopy[TOKEN_MAX_LENGTH] ;
+    while((c = getChar(dbuffer)) != EOF)
+    {
+        if( c == ' ' || c == '\n' || c == '\r') //in fact , there are no '\r' any more
+        {
+            continue ;
+        }
+        /** recognize the ID , KEYWORD */
+        else if(isNonedigit(c)) /* identifier = nonedigit(nonedigit|digit)* */
+        {
+            readyCopy(dbuffer) ;
+            //read until not  (nonedigit|digit)
+            c = getChar(dbuffer) ;
+            while(isNonedigit(c) || isdigit(c) )
+            {
+                c = getChar(dbuffer) ;
+            }
+            /* the identifier has over */
+            retract(dbuffer,1) ; /* retract ,we should retract before copy it !!*/
+            copyToken(dbuffer,tokenNameCopy) ;
+            /* is the key word ?*/
+            if(lookUpKeyWord(keyWord,tokenNameCopy))
+            {
+                capitalize((char *)tokenNameCopy) ;
+                tokenScanEcho(tokenNameCopy,"") ;
+                tokenScanWriteToFile(resultFile,tokenNameCopy,"") ;
+                continue ;
+            }
+            /* not the keyword */
+            tokenScanEcho("ID",tokenNameCopy) ;
+            tokenScanWriteToFile(resultFile,"ID",tokenNameCopy) ;
+        }
+        /** recognize the INT ,REAL */
+        else if(isdigit(c))
+        {
+            readyCopy(dbuffer) ;
+            c = getChar(dbuffer) ;
+            while(isdigit(c))
+            {
+               c = getChar(dbuffer) ;
+            }
+            /* it is not the digit , is '.' ?*/
+            if(c == '.')
+            {
+                c = getChar(dbuffer) ;
+                while(isdigit(c))
+                {
+                    c = getChar(dbuffer) ;
+                }
+                /* real over */
+                retract(dbuffer,1) ;
+                copyToken(dbuffer,tokenNameCopy) ;
+
+                /* just echo */
+                tokenScanEcho("REAL_C",tokenNameCopy) ;
+                tokenScanWriteToFile(resultFile,"REAL_C",tokenNameCopy) ;
+            }
+            else
+            {
+                /* it is INT */
+                retract(dbuffer,1) ;
+                copyToken(dbuffer,tokenNameCopy) ;
+
+                /* just echo */
+                tokenScanEcho("INT_C",tokenNameCopy) ;
+                tokenScanWriteToFile(resultFile,"INT_C",tokenNameCopy) ;
+            }
+        }
+        /** recognize the CHAR_C */
+        else if(c == '\'')
+        {
+            readyCopy(dbuffer) ;
+            c = getChar(dbuffer) ;
+            if(c == '\\')
+            {
+                /* escape char */
+                c = getChar(dbuffer) ;
+                /* again */
+                c = getChar(dbuffer) ;
+                if(c != '\'')
+                {
+                    tokenScanError("CHAR definition error","char escape error") ;
+                }
+                copyToken(dbuffer,tokenNameCopy) ;
+                tokenScanEcho("CHAR_C",tokenNameCopy) ;
+                tokenScanWriteToFile(resultFile,"CHAR_C",tokenNameCopy) ;
+            }
+            else
+            {
+                c = getChar(dbuffer) ;
+                if(c != '\'')
+                {
+                    tokenScanError("CHAR definition error","''should just has one character") ;
+                    errc++ ;
+                }
+                copyToken(dbuffer,tokenNameCopy) ;
+                /* do not need retract */
+                tokenScanEcho("CHAR_C",tokenNameCopy) ;
+                tokenScanWriteToFile(resultFile,"CHAR_C",tokenNameCopy) ;
+            }
+        }
+        /** recognize the string */
+        else if(c == '"')
+        {
+            readyCopy(dbuffer) ;
+            c = getChar(dbuffer) ;
+            while(c != '"')
+            {
+                if(c == '\\')
+                {
+                    /* escape , be careful */
+                    /* we read the char to skip the escape */
+                    c = getChar(dbuffer) ;
+
+                }
+                c = getChar(dbuffer) ;
+            }
+            copyToken(dbuffer,tokenNameCopy) ;
+            /* do not retract */
+            tokenScanEcho("STRING_C",tokenNameCopy) ;
+            tokenScanWriteToFile(resultFile,"STRING_C",tokenNameCopy) ;
+        }
+        /** recognize the operator and separator*/
+        else
+        {
+            /*readyCopy(dbuffer) ;*/
+            switch(c)
+            {
+                case '>' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** >= */
+                        tokenScanEcho("GE","") ;
+                        /*tokenScanEcho("=","") ;*/
+                        tokenScanWriteToFile(resultFile,"GE","") ;
+                    }
+                    else
+                    {
+                        /** > */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("GT","") ;
+                         tokenScanWriteToFile(resultFile,"GT","") ;
+                    }
+                    break ;
+                }
+                case '<' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** <= */
+                        tokenScanEcho("LE","") ;
+                        tokenScanWriteToFile(resultFile,"LE","") ;
+                    }
+                    else
+                    {
+                        /** < */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("LT","") ;
+                        tokenScanWriteToFile(resultFile,"LT","") ;
+                    }
+                    break ;
+                }
+                case '=' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** == */
+                        tokenScanEcho("EQ","") ;
+                        tokenScanWriteToFile(resultFile,"EQ","") ;
+                    }
+                    else
+                    {
+                        /** = */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("ASSIGN","") ;
+                        tokenScanWriteToFile(resultFile,"ASSIGN","") ;
+                    }
+                    break ;
+                }
+                case '!' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** != */
+                        tokenScanEcho("NEQ","") ;
+                        tokenScanWriteToFile(resultFile,"NEQ","") ;
+                    }
+                    else
+                    {
+                        /** ! */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("NOT","") ;
+                        tokenScanWriteToFile(resultFile,"NOT","") ;
+                    }
+                    break ;
+                }
+                case '(' :
+                {
+                     /** ( */
+                    tokenScanEcho("LR_BRAC","") ;
+                    tokenScanWriteToFile(resultFile,"LR_BRAC","") ;
+                    /* we need do the error-process by stack */
+                    if(!push(stack,'('))
+                    {
+                        tokenScanError("INNER ERROR","stack has full") ;
+                        errc++ ;
+                    }
+                    break ;
+                }
+
+                case ')' :
+                {
+                     /** ) */
+                    tokenScanEcho("RR_BRAC","") ;
+                    tokenScanWriteToFile(resultFile,"RR_BRAC","") ;
+                    char charMatch ;
+                    if(pop(stack,&charMatch))
+                    {
+                        if(charMatch != '(')
+                        {
+                            /* not matched */
+                            tokenScanError("NOT MATCHED","right round bracket is not matched") ;
+                            errc++ ;
+                        }
+                    }
+                    else
+                    {
+                        /* the stack has empty*/
+                        tokenScanError("NOT MATCHED","more right round brackets is found") ;
+                        errc++ ;
+                    }
+                    break ;
+                }
+                case '[' :
+                {
+                      /** [ */
+                    tokenScanEcho("LS_BRAC","") ;
+                    tokenScanWriteToFile(resultFile,"LS_BRAC","") ;
+                    if(!push(stack,'['))
+                    {
+                        tokenScanError("INNER ERROR","stack has full") ;
+                        errc++ ;
+                    }
+                    break ;
+                }
+
+                case ']' :
+                {
+                    tokenScanEcho("RS_BRAC","") ;
+                    tokenScanWriteToFile(resultFile,"RS_BRAC","") ;
+                    char charMatch ;
+                    if(pop(stack,&charMatch))
+                    {
+                        if(charMatch != '[')
+                        {
+                            /* not matched */
+                            tokenScanError("NOT MATCHED","right square bracket is not matched") ;
+                            errc++ ;
+                        }
+                    }
+                    else
+                    {
+                        /* the stack has empty*/
+                        tokenScanError("NOT MATCHED","more right square brackets is found") ;
+                        errc++ ;
+                    }
+                    break ;
+                }
+                case '+':
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '+')
+                    {
+                        /** ++ */
+                        tokenScanEcho("INC","") ;
+                        tokenScanWriteToFile(resultFile,"INC","") ;
+                    }
+                    else if(c == '=')
+                    {
+                        /** ++ */
+                        tokenScanEcho("ADD_ASS","") ;
+                        tokenScanWriteToFile(resultFile,"ADD_ASS","") ;
+                    }
+                    else
+                    {
+                        /** + */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("ADD","") ;
+                        tokenScanWriteToFile(resultFile,"ADD","") ;
+                    }
+                    break ;
+                }
+                case '-' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '-')
+                    {
+                        /** -- */
+                        tokenScanEcho("DEC","") ;
+                        tokenScanWriteToFile(resultFile,"DEC","") ;
+                    }
+                    else if(c == '=')
+                    {
+                        /** -= */
+                        tokenScanEcho("SUB_ASS","") ;
+                        tokenScanWriteToFile(resultFile,"SUB_ASS","") ;
+                    }
+                    else
+                    {
+                        /** - */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("SUB","") ;
+                        tokenScanWriteToFile(resultFile,"SUB","") ;
+                    }
+                    break ;
+                }
+                case '*' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** *= */
+                        tokenScanEcho("MUL_ASS","") ;
+                        tokenScanWriteToFile(resultFile,"MUL_ASS","") ;
+                    }
+                    else
+                    {
+                        /** * */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("MUL_OR_INDIR","") ;
+                        tokenScanWriteToFile(resultFile,"MUL_OR_INDIR","") ;
+                    }
+                    break ;
+                }
+                case '/' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '=')
+                    {
+                        /** /= */
+                        tokenScanEcho("DIV_ASS","") ;
+                        tokenScanWriteToFile(resultFile,"DIV_ASS","") ;
+                    }
+                    else
+                    {
+                        /** / */
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("DIV","") ;
+                        tokenScanWriteToFile(resultFile,"DIV","") ;
+                    }
+                    break ;
+                }
+                case '&' :
+                {
+                    c = getChar(dbuffer) ;
+                    if(c == '&')
+                    {
+                        /** && */
+                        tokenScanEcho("AND","") ;
+                        tokenScanWriteToFile(resultFile,"AND","") ;
+                    }
+                    else
+                    {
+                        /** &*/
+                        retract(dbuffer,1) ;
+                        tokenScanEcho("REFERENCE","") ;
+                        tokenScanWriteToFile(resultFile,"REFERENCE","") ;
+                    }
+                    break ;
+                }
+                case '|' :
+                {
+                    c = getChar('|') ;
+                    if(c == '|')
+                    {
+                        /** || */
+                        tokenScanEcho("OR","") ;
+                        tokenScanWriteToFile(resultFile,"OR","") ;
+                    }
+                    else
+                    {
+                        tokenScanError("NOT SUPPORTED OPARATOR","'|' is not supported!") ;
+                        errc++ ;
+                    }
+                    break ;
+                }
+                case ',' :
+                    /** , */
+                    tokenScanEcho("COMMA","") ;
+                    tokenScanWriteToFile(resultFile,"COMMA","") ;
+                    break ;
+                case ';' :
+                    /** ; */
+                    tokenScanEcho("SEMIC","") ;
+                    tokenScanWriteToFile(resultFile,"SEMIC","") ;
+                    break ;
+                case '{' :
+                {
+                    /** { */
+                    tokenScanEcho("LB_BRAC","") ;
+                    tokenScanWriteToFile(resultFile,"LB_BRAC","") ;
+                    if(!push(stack,'{'))
+                    {
+                        errc++ ;
+                        tokenScanError("INNER ERROR","stack has full") ;
+                    }
+                    break ;
+                }
+
+                case '}' :
+                {
+                     /** } */
+                    tokenScanEcho("RB_BRAC","") ;
+                    tokenScanWriteToFile(resultFile,"RB_BRAC","") ;
+                    char charMatch ;
+                    if(pop(stack,&charMatch))
+                    {
+                        if(charMatch != '{')
+                        {
+                            /* not matched */
+                            errc++ ;
+                            tokenScanError("NOT MATCHED","right square bracket is not matched") ;
+                        }
+                    }
+                    else
+                    {
+                        /* the stack has empty*/
+                        errc++ ;
+                        tokenScanError("NOT MATCHED","more right square brackets is found") ;
+                    }
+                    break ;
+                }
+
+                default :
+                {
+                    /** not supported */
+                    char tokenError[200] ;
+                    sprintf(tokenError,"character:%c is not supported!",c) ;
+                    errc++ ;
+                    tokenScanError("NOT SUPPORTED CHARACTER",tokenError) ;
+                }
+
+            }
+        }
+    }
+    /* is the stack empty ? */
+    if(!isEmpty(stack))
+    {
+        tokenScanError("NOT MATCHED","brackets is not matched") ;
+    }
+    deleteDBuffer(dbuffer) ;
+    free(stack) ;
+    fclose(resultFile) ;
+    return errc ;
+}
+int isNonedigit(char c)
+{
+   return (isalpha(c) || c == '_') ;
+}
+void tokenScanEcho(char * type , char* val)
+{
+        printf("( %s , %s )\n",type,val) ;
+}
+void tokenScanWriteToFile(FILE * fp , char * type , char * val)
+{
+    fprintf(fp,"%s , %s ;\n",type,val) ;
+}
+void printLine()
+{
+    int i ;
+    for(i = 0 ; i < 30 ; i ++)
+    {
+        if(i %3 == 0)
+        {
+            putc('-',stdout) ;
+        }
+        else
+        {
+            putc(' ',stdout) ;
+        }
+    }
+    putchar('\n') ;
+}
+void tokenScanError(char * errorType , char * detail)
+{
+    printLine() ;
+    printf("\nERROR: %s :%s\n\n",errorType , detail) ;
+    printLine() ;
+}

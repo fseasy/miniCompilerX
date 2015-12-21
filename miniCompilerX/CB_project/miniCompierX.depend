@@ -1,0 +1,183 @@
+# depslib dependency file v1.0
+1399556759 source:c:\users\xx.pureweber51-pc\c++pro\minicompierx\main.c
+	<stdio.h>
+	<stdlib.h>
+
+1399554946 source:c:\users\xx.pureweber51-pc\c++pro\minicompierx\lex\lexical.c
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+	"constant.h"
+	"token_code.h"
+	"../lex/hash.h"
+	"preprocess.h"
+	"dbuffer.h"
+	"keyword.h"
+	"stack.h"
+
+1399554172 c:\users\xx.pureweber51-pc\c++pro\minicompierx\lex\constant.h
+
+1395900287 c:\users\xx.pureweber51-pc\c++pro\minicompierx\lex\token_code.h
+
+1399554171 c:\users\xx.pureweber51-pc\c++pro\minicompierx\lex\hash.h
+
+1394760130 c:\users\xx.pureweber51-pc\c++pro\minicompierx\lex\preprocess.h
+
+1395842028 c:\users\xx.pureweber51-pc\c++pro\minicompierx\lex\dbuffer.h
+
+1395909219 c:\users\xx.pureweber51-pc\c++pro\minicompierx\lex\keyword.h
+
+1395910338 c:\users\xx.pureweber51-pc\c++pro\minicompierx\lex\stack.h
+
+1399553349 source:c:\users\xx.pureweber51-pc\c++pro\minicompierx\semantic\genfile.c
+	<stdlib.h>
+	<stdio.h>
+	"../syntax/analysis_table.h"
+
+1399435448 c:\users\xx.pureweber51-pc\c++pro\minicompierx\syntax\analysis_table.h
+	<string.h>
+
+1399553369 source:c:\users\xx.pureweber51-pc\c++pro\minicompierx\semantic\semantic_act.c
+	"semantic_analysis.h"
+	"../syntax/analysis_table.h"
+	<stdio.h>
+	<stdlib.h>
+
+1399513103 c:\users\xx.pureweber51-pc\c++pro\minicompierx\semantic\semantic_analysis.h
+
+1399557264 source:c:\users\xx.pureweber51-pc\c++pro\minicompierx\semantic\semantic_analysis.c
+	"semantic_analysis.h"
+	"../syntax/analysis_table.h"
+	<stdio.h>
+
+1399554523 source:c:\users\xx.pureweber51-pc\c++pro\minicompierx\syntax\analysis_table.c
+	<stdlib.h>
+	<stdio.h>
+	"analysis_table.h"
+
+1399557060 source:c:\users\xx.pureweber51-pc\c++pro\minicompierx\syntax\syntax.c
+	<stdio.h>
+	<stdlib.h>
+	"analysis_table.h"
+	"../semantic/semantic_analysis.h"
+
+1399565204 source:c:\users\readonlyfile\desktop\minicompierx\minicompierx\main.c
+	<stdio.h>
+	<stdlib.h>
+
+1399553349 source:c:\users\readonlyfile\desktop\minicompierx\minicompierx\semantic\genfile.c
+	<stdlib.h>
+	<stdio.h>
+	"../syntax/analysis_table.h"
+
+1399564941 c:\users\readonlyfile\desktop\minicompierx\minicompierx\syntax\analysis_table.h
+	<string.h>
+
+1399566334 source:c:\users\readonlyfile\desktop\minicompierx\minicompierx\semantic\semantic_act.c
+	"semantic_analysis.h"
+	"../syntax/analysis_table.h"
+	<stdio.h>
+	<stdlib.h>
+
+1399513103 c:\users\readonlyfile\desktop\minicompierx\minicompierx\semantic\semantic_analysis.h
+
+1399565905 source:c:\users\readonlyfile\desktop\minicompierx\minicompierx\semantic\semantic_analysis.c
+	"semantic_analysis.h"
+	"../syntax/analysis_table.h"
+	<stdio.h>
+
+1399554523 source:c:\users\readonlyfile\desktop\minicompierx\minicompierx\syntax\analysis_table.c
+	<stdlib.h>
+	<stdio.h>
+	"analysis_table.h"
+
+1399554946 source:c:\users\readonlyfile\desktop\minicompierx\minicompierx\lex\lexical.c
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+	"constant.h"
+	"token_code.h"
+	"../lex/hash.h"
+	"preprocess.h"
+	"dbuffer.h"
+	"keyword.h"
+	"stack.h"
+
+1399554172 c:\users\readonlyfile\desktop\minicompierx\minicompierx\lex\constant.h
+
+1395900287 c:\users\readonlyfile\desktop\minicompierx\minicompierx\lex\token_code.h
+
+1399554171 c:\users\readonlyfile\desktop\minicompierx\minicompierx\lex\hash.h
+
+1394760130 c:\users\readonlyfile\desktop\minicompierx\minicompierx\lex\preprocess.h
+
+1395842028 c:\users\readonlyfile\desktop\minicompierx\minicompierx\lex\dbuffer.h
+
+1395909219 c:\users\readonlyfile\desktop\minicompierx\minicompierx\lex\keyword.h
+
+1395910338 c:\users\readonlyfile\desktop\minicompierx\minicompierx\lex\stack.h
+
+1399565131 source:c:\users\readonlyfile\desktop\minicompierx\minicompierx\syntax\syntax.c
+	<stdio.h>
+	<stdlib.h>
+	"analysis_table.h"
+	"../semantic/semantic_analysis.h"
+
+1399553349 source:d:\weiwei\课程\大三下学期\编译原理\minicompierx\semantic\genfile.c
+	<stdlib.h>
+	<stdio.h>
+	"../syntax/analysis_table.h"
+
+1399564941 d:\weiwei\课程\大三下学期\编译原理\minicompierx\syntax\analysis_table.h
+	<string.h>
+
+1399566334 source:d:\weiwei\课程\大三下学期\编译原理\minicompierx\semantic\semantic_act.c
+	"semantic_analysis.h"
+	"../syntax/analysis_table.h"
+	<stdio.h>
+	<stdlib.h>
+
+1399513103 d:\weiwei\课程\大三下学期\编译原理\minicompierx\semantic\semantic_analysis.h
+
+1399565905 source:d:\weiwei\课程\大三下学期\编译原理\minicompierx\semantic\semantic_analysis.c
+	"semantic_analysis.h"
+	"../syntax/analysis_table.h"
+	<stdio.h>
+
+1399554523 source:d:\weiwei\课程\大三下学期\编译原理\minicompierx\syntax\analysis_table.c
+	<stdlib.h>
+	<stdio.h>
+	"analysis_table.h"
+
+1399565131 source:d:\weiwei\课程\大三下学期\编译原理\minicompierx\syntax\syntax.c
+	<stdio.h>
+	<stdlib.h>
+	"analysis_table.h"
+	"../semantic/semantic_analysis.h"
+
+1399554946 source:d:\weiwei\课程\大三下学期\编译原理\minicompierx\lex\lexical.c
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
+	"constant.h"
+	"token_code.h"
+	"../lex/hash.h"
+	"preprocess.h"
+	"dbuffer.h"
+	"keyword.h"
+	"stack.h"
+
+1399554172 d:\weiwei\课程\大三下学期\编译原理\minicompierx\lex\constant.h
+
+1395900287 d:\weiwei\课程\大三下学期\编译原理\minicompierx\lex\token_code.h
+
+1399554171 d:\weiwei\课程\大三下学期\编译原理\minicompierx\lex\hash.h
+
+1394760130 d:\weiwei\课程\大三下学期\编译原理\minicompierx\lex\preprocess.h
+
+1395842028 d:\weiwei\课程\大三下学期\编译原理\minicompierx\lex\dbuffer.h
+
+1395909219 d:\weiwei\课程\大三下学期\编译原理\minicompierx\lex\keyword.h
+
+1395910338 d:\weiwei\课程\大三下学期\编译原理\minicompierx\lex\stack.h
+
